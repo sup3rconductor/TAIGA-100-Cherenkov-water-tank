@@ -1,0 +1,278 @@
+
+#include "DetDetectorConstruction.hh"
+#include "DetSteppingAction.hh"
+
+#include "G4RunManager.hh"
+#include "G4Box.hh"
+#include "G4Tubs.hh"
+//#include "G4SubtractionSolid.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+
+#include "G4LogicalBorderSurface.hh"
+#include "G4LogicalSkinSurface.hh"
+#include "G4OpBoundaryProcess.hh"
+
+#include "G4VisAttributes.hh"
+#include "G4Colour.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+DetDetectorConstruction::DetDetectorConstruction()
+: G4VUserDetectorConstruction()
+{ }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+DetDetectorConstruction::~DetDetectorConstruction()
+{ }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4VPhysicalVolume* DetDetectorConstruction::Construct()
+{      
+
+  
+  G4double a, z;  // atomic mass, atomic number
+  G4double density, fractionmass;
+  G4int ncomponents, nelements, j;
+
+  G4Element* elCr = new G4Element("Chromium"   , "Cr"  , z=24.,  a = 52.00*g/mole);
+  G4Element* elFe = new G4Element("Ferrum"   , "Fe"  , z=26.,  a = 55.85*g/mole);
+  
+  G4Element* elO  = new G4Element("Oxygen"   , "O"  , z=8.,  a = 16.00*g/mole);
+  G4Element* elN  = new G4Element("Nitrogen" , "N"  , z=7.,  a = 14.01*g/mole);
+  G4Element* elC  = new G4Element("Carbon"   , "C"  , z=6.,  a = 12.01*g/mole);
+  G4Element* elH  = new G4Element("Hydrogen" , "H"  , z=1.,  a = 1.01*g/mole); 
+
+
+ 
+  G4Material* StSteel = new G4Material("MStSteel"  , density= 7.70*mg/cm3, ncomponents=2);
+  StSteel->AddElement(elFe, fractionmass=0.87);
+  StSteel->AddElement(elCr, fractionmass=0.13);
+
+  //
+  G4Material* Air = new G4Material("MAir"  , density= 1.290*mg/cm3, ncomponents=2);
+  Air->AddElement(elN, fractionmass=0.7);
+  Air->AddElement(elO, fractionmass=0.3);
+  	
+  //
+  G4Material* Plexiglass = new G4Material("MPlexiglass", density=1.19*g/cm3, nelements=3);
+  Plexiglass->AddElement(elC, nelements=5);
+  Plexiglass->AddElement(elO, nelements=2); 
+  Plexiglass->AddElement(elH, nelements=8); 
+
+  //
+  G4Material* Scint = new G4Material("MScint", density=1.032*g/cm3, ncomponents=2);
+  Scint->AddElement(elC, fractionmass=0.476);
+  Scint->AddElement(elH, fractionmass=0.524);
+
+ 
+  // Option to switch on/off
+
+  G4bool checkOverlaps = true;
+   
+  // World
+  G4double world_sizeX = 1*m;
+  G4double world_sizeY = 1*m;
+  G4double world_sizeZ = 1*m;
+  
+  G4Box* solidWorld = new G4Box("World_g", 0.5*world_sizeX, 0.5*world_sizeY, 0.5*world_sizeZ);        
+  G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, Air, "World_l");                                    
+  G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0, checkOverlaps); 
+  G4double ShirSteel = 50*mm; //
+
+
+  G4double Dlinab1  = 245*mm; //
+  G4double Shirinab1 = 146*mm; //
+  G4double Visotab1 = 20*mm; //
+  G4double b1_xpos = 0*mm;
+  G4double b1_ypos = 0*mm;
+  G4double b1_zpos = 0.5*Visotab1;
+
+  G4Box* solidb1 = new G4Box("b1_g", 0.5*Dlinab1 , 0.5*Shirinab1, 0.5*Visotab1);       
+  G4LogicalVolume* logicb1 =  new G4LogicalVolume(solidb1, StSteel, "b1_l");               
+  G4VPhysicalVolume* physb1 = new G4PVPlacement(0, G4ThreeVector(b1_xpos, b1_ypos, b1_zpos), logicb1, "b1", logicWorld, false, 0, checkOverlaps);  
+ G4double a, z;  // atomic mass, atomic number
+  G4double density, fractionmass;
+  G4int ncomponents, nelements, j;
+
+  G4Element* elCr = new G4Element("Chromium"   , "Cr"  , z=24.,  a = 52.00*g/mole);
+  G4Element* elFe = new G4Element("Ferrum"   , "Fe"  , z=26.,  a = 55.85*g/mole);
+  
+  G4Element* elO  = new G4Element("Oxygen"   , "O"  , z=8.,  a = 16.00*g/mole);
+  G4Element* elN  = new G4Element("Nitrogen" , "N"  , z=7.,  a = 14.01*g/mole);
+  G4Element* elC  = new G4Element("Carbon"   , "C"  , z=6.,  a = 12.01*g/mole);
+  G4Element* elH  = new G4Element("Hydrogen" , "H"  , z=1.,  a = 1.01*g/mole); 
+
+
+ 
+  G4Material* StSteel = new G4Material("MStSteel"  , density= 7.70*mg/cm3, ncomponents=2);
+  StSteel->AddElement(elFe, fractionmass=0.87);
+  StSteel->AddElement(elCr, fractionmass=0.13);
+
+  //
+  G4Material* Air = new G4Material("MAir"  , density= 1.290*mg/cm3, ncomponents=2);
+  Air->AddElement(elN, fractionmass=0.7);
+  Air->AddElement(elO, fractionmass=0.3);
+  	
+  //
+  G4Material* Plexiglass = new G4Material("MPlexiglass", density=1.19*g/cm3, nelements=3);
+  Plexiglass->AddElement(elC, nelements=5);
+  Plexiglass->AddElement(elO, nelements=2); 
+  Plexiglass->AddElement(elH, nelements=8); 
+
+  //
+  G4Material* Scint = new G4Material("MScint", density=1.032*g/cm3, ncomponents=2);
+  Scint->AddElement(elC, fractionmass=0.476);
+  Scint->AddElement(elH, fractionmass=0.524);
+
+ 
+  // Option to switch on/off
+
+  G4bool checkOverlaps = true;
+   
+  // World
+  G4double world_sizeX = 1*m;
+  G4double world_sizeY = 1*m;
+  G4double world_sizeZ = 1*m;
+  
+  G4Box* solidWorld = new G4Box("World_g", 0.5*world_sizeX, 0.5*world_sizeY, 0.5*world_sizeZ);        
+  G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, Air, "World_l");                                    
+  G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0, checkOverlaps); 
+  G4double ShirSteel = 50*mm; //
+
+
+  G4double Dlinab1  = 245*mm; //
+  G4double Shirinab1 = 146*mm; //
+  G4double Visotab1 = 20*mm; //
+  G4double b1_xpos = 0*mm;
+  G4double b1_ypos = 0*mm;
+  G4double b1_zpos = 0.5*Visotab1;
+
+  G4Box* solidb1 = new G4Box("b1_g", 0.5*Dlinab1 , 0.5*Shirinab1, 0.5*Visotab1);       
+  G4LogicalVolume* logicb1 =  new G4LogicalVolume(solidb1, StSteel, "b1_l");               
+  G4VPhysicalVolume* physb1 = new G4PVPlacement(0, G4ThreeVector(b1_xpos, b1_ypos, b1_zpos), logicb1, "b1", logicWorld, false, 0, checkOverlaps);  
+
+  G4double Dlinap1  = Dlinab1-2*ShirSteel;
+  G4double Shirinap1 = Shirinab1-2*ShirSteel;
+  G4double Visotap1 = Visotab1;
+
+  G4Box* solidp1 = new G4Box("p1_g", 0.5*Dlinap1 , 0.5*Shirinap1, 0.5*Visotap1);       
+  G4LogicalVolume* logicp1 =  new G4LogicalVolume(solidp1, Air, "p1_l");               
+  G4VPhysicalVolume* physp1 = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicp1, "p1", logicb1, false, 0, checkOverlaps);  
+
+
+  G4double Dlinab2  = 207*mm; //
+  G4double Shirinab2 = 107*mm; //
+  G4double Visotab2 = 118*mm; //
+
+  G4double b2_xpos = b1_xpos;
+  G4double b2_ypos = b1_ypos;
+  G4double b2_zpos = (Visotab1+0.5*Visotab2);
+
+  G4Box* solidb2 = new G4Box("b2_g", 0.5*Dlinab2 , 0.5*Shirinab2, 0.5*Visotab2);       
+  G4LogicalVolume* logicb2 =  new G4LogicalVolume(solidb2, StSteel, "b2_l");               
+  G4VPhysicalVolume* physb2 = new G4PVPlacement(0, G4ThreeVector(b2_xpos, b2_ypos, b2_zpos), logicb2, "b2", logicWorld, false, 0, checkOverlaps);  
+
+
+
+
+
+  G4double Dlinap2  = Dlinab2-2*ShirSteel;
+  G4double Shirinap2 = Shirinab2-2*ShirSteel;
+  G4double Visotap2 = Visotab2;
+
+  G4Box* solidp2 = new G4Box("p2_g", 0.5*Dlinap2 , 0.5*Shirinap2, 0.5*Visotap2);       
+  G4LogicalVolume* logicp2 =  new G4LogicalVolume(solidp2, Air, "p2_l");               
+  G4VPhysicalVolume* physp2 = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicp2, "p2", logicb2, false, 0, checkOverlaps);
+
+
+
+
+  G4double Dlina1b3  = 200*mm; //
+  G4double Shirina1b3 = 100*mm; //
+  G4double Dlina2b3  = 851*mm; //
+  G4double Shirina2b3 = 851*mm; //
+  G4double Visotab3 = 233*mm; // 
+  
+  
+  G4double b3_xpos = b2_xpos;
+  G4double b3_ypos = b2_ypos;
+  G4double b3_zpos = (Visotab1+Visotab2+0.5*Visotab3);
+
+  G4Trd* solidb3 = new G4Trd("b3_g", 0.5*Dlina1b3, 0.5*Dlina2b3, 0.5*Shirina1b3, 0.5*Shirina2b3, 0.5*Visotab3);    
+  G4LogicalVolume* logicb3 =  new G4LogicalVolume(solidb3, StSteel, "b3_l");               
+  G4VPhysicalVolume* physb3 = new G4PVPlacement(0, G4ThreeVector(b3_xpos, b3_ypos, b3_zpos), logicb3, "b3", logicWorld, false, 0, checkOverlaps); 
+
+
+
+  G4double Dlina1p3  = (Dlina1b3-ShirSteel*std::sqrt(Dlina1b3*Dlina1b3+4*Visotab3*Visotab3)/Visotab3);
+  G4double Shirina1p3 = (Shirina1b3-ShirSteel*std::sqrt(Shirina1b3*Shirina1b3+4*Visotab3*Visotab3)/Visotab3);
+  G4double Dlina2p3  = (Dlina2b3-ShirSteel*std::sqrt(Dlina2b3*Dlina2b3+4*Visotab3*Visotab3)/Visotab3);
+  G4double Shirina2p3 = (Shirina2b3-ShirSteel*std::sqrt(Shirina2b3*Shirina2b3+4*Visotab3*Visotab3)/Visotab3);
+  G4double Visotap3 = Visotab3;
+
+  G4Trd* solidp3 = new G4Trd("p3_g", 0.5*Dlina1p3, 0.5*Dlina2p3, 0.5*Shirina1p3, 0.5*Shirina2p3, 0.5*Visotap3);    
+  G4LogicalVolume* logicp3 =  new G4LogicalVolume(solidp3, Air, "p3_l");               
+  G4VPhysicalVolume* physp3 = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicp3, "p3", logicb3, false, 0, checkOverlaps); 
+
+
+  G4double Dlinab4  = 858*mm; //
+  G4double Shirinab4 = 858*mm; // 
+  G4double Visotab4 = 121*mm; //
+
+  G4double b4_xpos = b3_xpos;
+  G4double b4_ypos = b3_ypos;
+  G4double b4_zpos = (Visotab1+Visotab2+Visotab3+0.5*Visotab4);
+
+  G4Box* solidb4 = new G4Box("b4_g", 0.5*Dlinab4 , 0.5*Shirinab4, 0.5*Visotab4);       
+  G4LogicalVolume* logicb4 =  new G4LogicalVolume(solidb4, StSteel, "b4_l");               
+  G4VPhysicalVolume* physb4 = new G4PVPlacement(0, G4ThreeVector(b4_xpos, b4_ypos, b4_zpos), logicb4, "b4", logicWorld, false, 0, checkOverlaps);  
+
+
+
+
+  G4double Dlinap4  = Dlinab4-2*ShirSteel;
+  G4double Shirinap4 = Shirinab4-2*ShirSteel;
+  G4double Visotap4 = Visotab4;
+
+  G4Box* solidp4 = new G4Box("p4_g", 0.5*Dlinap4 , 0.5*Shirinap4, 0.5*Visotap4);       
+  G4LogicalVolume* logicp4 =  new G4LogicalVolume(solidp4, Air, "p4_l");               
+  G4VPhysicalVolume* physp4 = new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicp4, "p4", logicb4, false, 0, checkOverlaps);
+
+
+
+  G4Colour grey     (0.5, 0.5, 0.5);//
+  G4Colour black    (0.0, 0.0, 0.0);
+  G4Colour red      (1.0, 0.0, 0.0);//
+  G4Colour green    (0.0, 1.0, 0.0);//
+  G4Colour blue     (0.0, 0.0, 1.0);//
+  G4Colour cyan     (0.0, 1.0, 1.0);
+  G4Colour magenta  (1.0, 0.0, 1.0);
+  G4Colour yellow   (1.0, 1.0, 0.0);
+    
+
+  G4VisAttributes* VisAtt_b4= new G4VisAttributes(blue);
+  VisAtt_b4->SetForceSolid(true);
+  logicb4->SetVisAttributes(VisAtt_b4);
+
+  G4VisAttributes* VisAtt_b3= new G4VisAttributes(green);
+  VisAtt_b3->SetForceSolid(true);
+  logicb3->SetVisAttributes(VisAtt_b3);
+
+  G4VisAttributes* VisAtt_b2= new G4VisAttributes(red);
+  VisAtt_b2->SetForceSolid(true);
+  logicb2->SetVisAttributes(VisAtt_b2);
+
+  G4VisAttributes* VisAtt_b1= new G4VisAttributes(grey);
+  VisAtt_b1->SetForceSolid(true);
+  logicb1->SetVisAttributes(VisAtt_b1);
+
+
+
+  // return the physical World
+  return physWorld;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

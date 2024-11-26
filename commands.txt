@@ -1,0 +1,4 @@
+cd c:\Geant4\G4work\ModPirV2_vis V8.1\ModPirV2_build
+cmake ../
+cmake --build . --config Release
+.\release\exampleDet.exe
